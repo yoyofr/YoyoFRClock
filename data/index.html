@@ -1,0 +1,592 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YoyoFRClock web conf</title>
+  <link rel="stylesheet" href="jquery-ui.min.css">
+  <link rel="stylesheet" href="jquery-ui.theme.min.css">
+  <link rel="stylesheet" href="bootstrap-material-dtp.css">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">  
+  <script type="text/javascript" src="jquery.min.js"></script>
+  <script type="text/javascript" src="jquery-ui.min.js"></script>
+  <script type="text/javascript" src="moment.min.js"></script>
+  <script type="text/javascript" src="bootstrap-material-dtp.min.js"></script>
+  <script>
+    $(document).ready(function(){
+        $("#submitBtn").click(function(){    
+            $.ajax({
+                method: "POST",
+                url: "/update_config",           
+                data: $("#configForm").serialize(), // serializes the form's elements.       
+                success: function(data)
+                {
+                alert(data); // show response from the php script.
+                }
+            });
+        });
+
+        $("#backHomeBtn").click(function(){        
+            location.href="/";
+        });
+    });
+    $( function() {
+        $( ".cbnoicon" ).checkboxradio({
+            icon: false
+        });
+        $( "fieldset" ).controlgroup();
+    } );
+    function limit(element) {
+        var max_chars = 3;
+
+        if(element.value.length > max_chars) {
+            element.value = element.value.substr(0, max_chars);
+        }
+        if (element.value<0) element.value=0;
+        if (element.value>255) element.value=255;
+    }
+  
+  </script>
+  
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            width:320px;
+        }    
+        .gif_schedule {
+            width:18em;
+        }
+        .gif_schedule label,.gif_schedule input {
+            font-size:10;
+        }
+        .music_schedule {
+            width:18em;
+        }
+        .music_schedule label,.music_schedule input {
+            font-size:10;
+        }
+        .brightness_schedule {
+            width:18em;
+        }
+        .brightness_schedule label {
+            font-size:10;
+            width:2em;        
+        }
+        .brightness_schedule input {
+            font-size:12;
+            width:4em;    
+        }
+        
+        .alarms_schedule {
+            width:18em;
+        }
+        .alarms_schedule label {
+            float: left;   
+            font-size:6;
+        }
+        .alarms_schedule input {
+            float: left;   
+            font-size:13;
+        }
+        .alarms_schedule .txtAlarmTime {
+            font-size:11;
+            width:3.5em;
+        }
+        .cbalarmlbl {        
+            width:7em;        
+        }
+        .txtAlarmLbl {
+            font-size:16;        
+        }    
+        .txtGifDirLbl {
+            font-size:14;        
+        }     
+        .gifdirs_schedule{        
+            width:18em;
+        }
+        .gifdirs_schedule label {
+            font-size:6;        
+        }
+        .btnalarm {
+            font-size:0.75em;
+        float:right;
+        }
+        .mp3alarm, .ui-selectmenu-button.ui-button {    
+            width: 12em;
+            font-size:10;        
+        }
+        #submitBtn {
+            width:7em;
+            font-size:14;
+            height:4em;
+            float: left;
+            margin: 0 auto;            
+        }
+        #backHomeBtn {
+            width:7em;
+            font-size:14;
+            height:4em;
+            float: right;
+            margin: 0 auto;            
+        }
+        #submitBtnIcon {
+            zoom: 150%; 
+            -moz-transform: scale(1.5); 
+            -webkit-zoom: 1.5; 
+            -ms-zoom: 1.5;
+        }
+        #backHomeBtnIcon {
+            zoom: 150%; 
+            -moz-transform: scale(1.5); 
+            -webkit-zoom: 1.5; 
+            -ms-zoom: 1.5;
+        }
+
+        @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url("http://yoyofr92.free.fr/yoyofrclk/Material-Design-Icons.woff2") format('woff2');
+        }
+
+        .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+        }
+
+    </style>
+</head>
+<body>
+ 
+<div class="widget">
+    
+<form action="/update_config" method="POST" id="configForm">
+    
+  <h2></h2>
+  <fieldset class="gif_schedule">
+    <legend>GIF animations - daily planning</legend>
+    <label for="cbgif-1">00</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-1" id="cbgif-1">
+    <label for="cbgif-2">01</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-2" id="cbgif-2">
+    <label for="cbgif-3">02</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-3" id="cbgif-3">
+    <label for="cbgif-4">03</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-4" id="cbgif-4">
+    <label for="cbgif-5">04</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-5" id="cbgif-5">
+    <label for="cbgif-6">05</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-6" id="cbgif-6">
+    <label for="cbgif-7">06</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-7" id="cbgif-7">
+    <label for="cbgif-8">07</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-8" id="cbgif-8">
+    <label for="cbgif-9">08</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-9" id="cbgif-9">
+    <label for="cbgif-10">09</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-10" id="cbgif-10">
+    <label for="cbgif-11">10</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-11" id="cbgif-11">
+    <label for="cbgif-12">11</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-12" id="cbgif-12">
+    <label for="cbgif-13">12</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-13" id="cbgif-13">
+    <label for="cbgif-14">13</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-14" id="cbgif-14">
+    <label for="cbgif-15">14</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-15" id="cbgif-15">
+    <label for="cbgif-16">15</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-16" id="cbgif-16">
+    <label for="cbgif-17">16</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-17" id="cbgif-17">
+    <label for="cbgif-18">17</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-18" id="cbgif-18">
+    <label for="cbgif-19">18</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-19" id="cbgif-19">
+    <label for="cbgif-20">19</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-20" id="cbgif-20">
+    <label for="cbgif-21">20</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-21" id="cbgif-21">
+    <label for="cbgif-22">21</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-22" id="cbgif-22">
+    <label for="cbgif-23">22</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-23" id="cbgif-23">
+    <label for="cbgif-24">23</label>
+    <input class="cbnoicon" type="checkbox" name="cbgif-24" id="cbgif-24">
+  </fieldset>
+
+  <fieldset class="music_schedule">
+    <legend>Music/Audiobooks - daily planning</legend>
+    <label for="cbMP3-1">00</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-1" id="cbMP3-1">
+    <label for="cbMP3-2">01</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-2" id="cbMP3-2">
+    <label for="cbMP3-3">02</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-3" id="cbMP3-3">
+    <label for="cbMP3-4">03</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-4" id="cbMP3-4">
+    <label for="cbMP3-5">04</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-5" id="cbMP3-5">
+    <label for="cbMP3-6">05</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-6" id="cbMP3-6">
+    <label for="cbMP3-7">06</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-7" id="cbMP3-7">
+    <label for="cbMP3-8">07</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-8" id="cbMP3-8">
+    <label for="cbMP3-9">08</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-9" id="cbMP3-9">
+    <label for="cbMP3-10">09</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-10" id="cbMP3-10">
+    <label for="cbMP3-11">10</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-11" id="cbMP3-11">
+    <label for="cbMP3-12">11</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-12" id="cbMP3-12">
+    <label for="cbMP3-13">12</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-13" id="cbMP3-13">
+    <label for="cbMP3-14">13</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-14" id="cbMP3-14">
+    <label for="cbMP3-15">14</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-15" id="cbMP3-15">
+    <label for="cbMP3-16">15</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-16" id="cbMP3-16">
+    <label for="cbMP3-17">16</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-17" id="cbMP3-17">
+    <label for="cbMP3-18">17</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-18" id="cbMP3-18">
+    <label for="cbMP3-19">18</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-19" id="cbMP3-19">
+    <label for="cbMP3-20">19</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-20" id="cbMP3-20">
+    <label for="cbMP3-21">20</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-21" id="cbMP3-21">
+    <label for="cbMP3-22">21</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-22" id="cbMP3-22">
+    <label for="cbMP3-23">22</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-23" id="cbMP3-23">
+    <label for="cbMP3-24">23</label>
+    <input class="cbnoicon" type="checkbox" name="cbMP3-24" id="cbMP3-24">
+  </fieldset>
+
+  <fieldset class="brightness_schedule">
+    <legend>Brightness - daily planning</legend>
+    <div>
+    <label for="BrightT-1">00</label>
+    <input type="number" name="BrightT-1" id="BrightT-1" oninput="limit(this);" value=16>
+    <label for="BrightT-2">01</label>
+    <input type="number" name="BrightT-2" id="BrightT-2" oninput="limit(this);" value=16>
+    <label for="BrightT-3">02</label>
+    <input type="number" name="BrightT-3" id="BrightT-3" oninput="limit(this);" value=16>
+    <label for="BrightT-4">03</label>
+    <input type="number" name="BrightT-4" id="BrightT-4" oninput="limit(this);" value=16>
+</div>
+<div>
+    <label for="BrightT-5">04</label>
+    <input type="number" name="BrightT-5" id="BrightT-5" oninput="limit(this);" value=16>
+    <label for="BrightT-6">05</label>
+    <input type="number" name="BrightT-6" id="BrightT-6" oninput="limit(this);" value=16>
+    <label for="BrightT-7">06</label>
+    <input type="number" name="BrightT-7" id="BrightT-7" oninput="limit(this);" value=16>
+    <label for="BrightT-8">07</label>
+    <input type="number" name="BrightT-8" id="BrightT-8" oninput="limit(this);" value=16>
+</div><div>
+    <label for="BrightT-9">08</label>
+    <input type="number" name="BrightT-9" id="BrightT-9" oninput="limit(this);" value=16>
+    <label for="BrightT-10">09</label>
+    <input type="number" name="BrightT-10" id="BrightT-10" oninput="limit(this);" value=16>
+    <label for="BrightT-11">10</label>
+    <input type="number" name="BrightT-11" id="BrightT-11" oninput="limit(this);" value=16>
+    <label for="BrightT-12">11</label>
+    <input type="number" name="BrightT-12" id="BrightT-12" oninput="limit(this);" value=16>
+</div>    <div>
+    <label for="BrightT-13">12</label>
+    <input type="number" name="BrightT-13" id="BrightT-13" oninput="limit(this);" value=16>
+    <label for="BrightT-14">13</label>
+    <input type="number" name="BrightT-14" id="BrightT-14" oninput="limit(this);" value=16>
+    <label for="BrightT-15">14</label>
+    <input type="number" name="BrightT-15" id="BrightT-15" oninput="limit(this);" value=16>
+    <label for="BrightT-16">15</label>
+    <input type="number" name="BrightT-16" id="BrightT-16" oninput="limit(this);" value=16>
+</div>    <div>
+    <label for="BrightT-17">16</label>
+    <input type="number" name="BrightT-17" id="BrightT-17" oninput="limit(this);" value=16>
+    <label for="BrightT-18">17</label>
+    <input type="number" name="BrightT-18" id="BrightT-18" oninput="limit(this);" value=16>
+    <label for="BrightT-19">18</label>
+    <input type="number" name="BrightT-19" id="BrightT-19" oninput="limit(this);" value=16>
+    <label for="BrightT-20">19</label>
+    <input type="number" name="BrightT-20" id="BrightT-20" oninput="limit(this);" value=16>
+</div>    <div>
+    <label for="BrightT-21">20</label>
+    <input type="number" name="BrightT-21" id="BrightT-21" oninput="limit(this);" value=16>
+    <label for="BrightT-22">21</label>
+    <input type="number" name="BrightT-22" id="BrightT-22" oninput="limit(this);" value=16>
+    <label for="BrightT-23">22</label>
+    <input type="number" name="BrightT-23" id="BrightT-23" oninput="limit(this);" value=16>
+    <label for="BrightT-24">23</label>
+    <input type="number" name="BrightT-24" id="BrightT-24" oninput="limit(this);" value=16>
+    </div>
+  </fieldset>
+  <fieldset class="alarms_schedule">
+      <legend>Alarms</legend>    
+      <div>
+        <input type="checkbox" name="cbal-1" id="cbal-1">
+        <label for="cbal-1" ></label>        
+        <input class="txtAlarmTime" type="text" name="al-1" id="al-1" value="07:15">
+        <label class="cbalarmlbl" for="al-1" ><text class="txtAlarmLbl">Dim.</text></label>
+    
+    <select class="mp3alarm" name="mp3al-1" id="mp3al-1">
+        <option>random</option>
+    </select>
+    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-1">
+        <span class="ui-icon ui-icon-play"></span>icon only
+    </button>
+</div>
+    <div>
+        <input type="checkbox" name="cbal-2" id="cbal-2">
+        <label for="cbal-2" ></label>
+        <input class="txtAlarmTime" type="text" name="al-2" id="al-2" value="07:15">        
+        <label class="cbalarmlbl" for="al-2"><text class="txtAlarmLbl">Lun.</text></label>
+
+    
+    <select class="mp3alarm" name="mp3al-2" id="mp3al-2">
+        <option>random</option>
+    </select>
+    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-2">
+        <span class="ui-icon ui-icon-play"></span>icon only
+    </button>
+</div>
+    <div>
+        <input type="checkbox" name="cbal-3" id="cbal-3">
+        <label for="cbal-3" ></label>    
+        <input class="txtAlarmTime" type="text" name="al-3" id="al-3" value="07:15">
+        <label class="cbalarmlbl" for="al-3"><text class="txtAlarmLbl">Mar.</text></label>
+    
+    <select class="mp3alarm" name="mp3al-3" id="mp3al-3">
+        <option>random</option>
+    </select>
+    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-3">
+        <span class="ui-icon ui-icon-play"></span>icon only
+    </button>
+</div>
+<div>
+    <input type="checkbox" name="cbal-4" id="cbal-4">
+    <label for="cbal-4" ></label>
+    <input class="txtAlarmTime" type="text" name="al-4" id="al-4" value="07:15">
+    <label class="cbalarmlbl" for="al-4"><text class="txtAlarmLbl">Mer.</text></label>
+    
+    <select class="mp3alarm" name="mp3al-4" id="mp3al-4">
+        <option>random</option>
+    </select>
+    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-4">
+        <span class="ui-icon ui-icon-play"></span>icon only
+    </button>
+</div>
+    <div>
+    
+    <input type="checkbox" name="cbal-5" id="cbal-5">
+    <label for="cbal-5" ></label>
+    <input class="txtAlarmTime" type="text" name="al-5" id="al-5" value="07:15">
+    <label class="cbalarmlbl" for="al-5"><text class="txtAlarmLbl">Jeu.</text></label>
+    
+    <select class="mp3alarm" name="mp3al-5" id="mp3al-5">
+        <option>random</option>
+    </select>
+    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-5">
+        <span class="ui-icon ui-icon-play"></span>icon only
+    </button>
+</div>
+    <div>
+    
+    <input type="checkbox" name="cbal-6" id="cbal-6">
+    <label for="cbal-6" ></label>
+    <input class="txtAlarmTime" type="text" name="al-6" id="al-6" value="07:15">
+    <label class="cbalarmlbl" for="al-6"><text class="txtAlarmLbl">Ven.</text></label>
+    
+    <select class="mp3alarm" name="mp3al-6" id="mp3al-6">
+        <option>random</option>
+    </select>
+    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-6">
+        <span class="ui-icon ui-icon-play"></span>icon only
+    </button>
+</div>
+    <div>
+    <input type="checkbox" name="cbal-7" id="cbal-7">
+    <label for="cbal-7" ></label>
+    <input class="txtAlarmTime" type="text" name="al-7" id="al-7" value="07:15">
+    <label class="cbalarmlbl" for="al-7"><text class="txtAlarmLbl">Sam.</text></label>
+
+    <select class="mp3alarm" name="mp3al-7" id="mp3al-7">
+        <option>random</option>
+    </select>
+    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-7">
+        <span class="ui-icon ui-icon-play"></span>icon only
+    </button>
+</div>
+  </fieldset>
+
+
+  <fieldset  class="gifdirs_schedule" id="gifdirs_schedule_list">
+    <legend>Active GIFs directories</legend>
+  </fieldset>
+
+    <div>
+        <button class="ui-button ui-widget ui-corner-all" type="button" id="submitBtn">
+            <span class="ui-icon ui-icon-disk" id="submitBtnIcon"></span>Save</button>
+        
+        <button class="ui-button ui-widget ui-corner-all" type="button" id="backHomeBtn">
+            <span class="ui-icon ui-icon-home" id="backHomeBtnIcon"></span>
+            Back Home
+        </button>          
+  </button>
+    </div>    
+</form>
+ 
+</div>
+<script type="text/javascript">
+      
+            $('#al-1').bootstrapMaterialDatePicker
+			({
+				date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+            $('#al-2').bootstrapMaterialDatePicker
+			({
+				date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+            $('#al-3').bootstrapMaterialDatePicker
+			({
+				date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+            $('#al-4').bootstrapMaterialDatePicker
+			({
+				date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+            $('#al-5').bootstrapMaterialDatePicker
+			({
+				date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+            $('#al-6').bootstrapMaterialDatePicker
+			({
+				date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+            $('#al-7').bootstrapMaterialDatePicker
+			({
+				date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+       
+            $( "#submitbutton" ).button();
+
+            $('#btnal-1').click(function(){    // this ajax will call on button click whose id is "btn"
+                var selected=document.getElementById( 'mp3al-1' );                
+                $.ajax({
+                    url: '/testAlarm',   // url of file                     
+                    type: 'POST',         // get or post                         
+                    data: {
+                        alarmIndex  : selected.selectedIndex.toString()     // variables list (key-value pair)                         
+                    },
+                    success: function(response){    // response from process.php
+                        // do your stuff here
+                    }
+                });
+            });
+            $('#btnal-2').click(function(){    // this ajax will call on button click whose id is "btn"
+                var selected=document.getElementById( 'mp3al-2' );                
+                $.ajax({
+                    url: '/testAlarm',   // url of file                     
+                    type: 'POST',         // get or post                         
+                    data: {
+                        alarmIndex  : selected.selectedIndex.toString()     // variables list (key-value pair)                         
+                    },
+                    success: function(response){    // response from process.php
+                        // do your stuff here
+                    }
+                });
+            });
+            $('#btnal-3').click(function(){    // this ajax will call on button click whose id is "btn"
+                var selected=document.getElementById( 'mp3al-3' );                
+                $.ajax({
+                    url: '/testAlarm',   // url of file                     
+                    type: 'POST',         // get or post                         
+                    data: {
+                        alarmIndex  : selected.selectedIndex.toString()     // variables list (key-value pair)                         
+                    },
+                    success: function(response){    // response from process.php
+                        // do your stuff here
+                    }
+                });
+            });
+            $('#btnal-4').click(function(){    // this ajax will call on button click whose id is "btn"
+                var selected=document.getElementById( 'mp3al-4' );                
+                $.ajax({
+                    url: '/testAlarm',   // url of file                     
+                    type: 'POST',         // get or post                         
+                    data: {
+                        alarmIndex  : selected.selectedIndex.toString()     // variables list (key-value pair)                         
+                    },
+                    success: function(response){    // response from process.php
+                        // do your stuff here
+                    }
+                });
+            });
+            $('#btnal-5').click(function(){    // this ajax will call on button click whose id is "btn"
+                var selected=document.getElementById( 'mp3al-5' );                
+                $.ajax({
+                    url: '/testAlarm',   // url of file                     
+                    type: 'POST',         // get or post                         
+                    data: {
+                        alarmIndex  : selected.selectedIndex.toString()     // variables list (key-value pair)                         
+                    },
+                    success: function(response){    // response from process.php
+                        // do your stuff here
+                    }
+                });
+            });
+            $('#btnal-6').click(function(){    // this ajax will call on button click whose id is "btn"
+                var selected=document.getElementById( 'mp3al-6' );                
+                $.ajax({
+                    url: '/testAlarm',   // url of file                     
+                    type: 'POST',         // get or post                         
+                    data: {
+                        alarmIndex  : selected.selectedIndex.toString()     // variables list (key-value pair)                         
+                    },
+                    success: function(response){    // response from process.php
+                        // do your stuff here
+                    }
+                });
+            });
+            $('#btnal-7').click(function(){    // this ajax will call on button click whose id is "btn"
+                var selected=document.getElementById( 'mp3al-7' );                
+                $.ajax({
+                    url: '/testAlarm',   // url of file                     
+                    type: 'POST',         // get or post                         
+                    data: {
+                        alarmIndex  : selected.selectedIndex.toString()     // variables list (key-value pair)                         
+                    },
+                    success: function(response){    // response from process.php
+                        // do your stuff here
+                    }
+                });
+            });
