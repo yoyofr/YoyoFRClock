@@ -1475,7 +1475,7 @@ void handleTestAlarm(HTTPRequest * req, HTTPResponse * res) {
   Serial.printf("Dictionnary deleted\nTotal RAM: %d / available: %d / max allocatable: %d\n", ESP.getHeapSize(), ESP.getFreeHeap(), ESP.getMaxAllocHeap());
 }
 
-
+void handle404(HTTPRequest * req, HTTPResponse * res);
 
 void handleSPIFFS(HTTPRequest * req, HTTPResponse * res) {
   Serial.println("SPIFFS access required");
@@ -1495,11 +1495,7 @@ void handleSPIFFS(HTTPRequest * req, HTTPResponse * res) {
     // Check if the file exists
     if (!file_exist) {
       // Send "404 Not Found" as response, as the file doesn't seem to exist
-      res->setStatusCode(404);
-      res->setStatusText("Not found");
-      res->println("404 Not Found");
-
-      Serial.printf("KO\n");
+      handle404(req,res);      
       return;
     }
 
@@ -1550,7 +1546,7 @@ void handle404(HTTPRequest * req, HTTPResponse * res) {
   // Set the response status
   res->setStatusCode(404);
   res->setHeader("Content-Type", "text/html");
-  webSendFileData("/menu.html",res);
+  webSendFileData("/error404.html",res);
 
 /*
   res->setStatusText("Not Found");
