@@ -17,6 +17,7 @@ void config_savetosd(void);
 void update_clock_color(void);
 void task_fftLoop(void *parameter);
 
+
 #define GIFS_ANIM_DIR_MAX 32 //MAX 32 directories
 
 enum {
@@ -74,7 +75,13 @@ int clock_alarm_weekday_mp3_index[7]={-1,-1,-1,-1,-1,-1,-1};
 char clk_global_hostname[32];
 
 #define CLOCK_DELAY_BEFORE_ANIM 12
-int clk_global_display_time_delay;
+int clk_global_display_time_duration;
+
+#define CLOCK_GLOBAL_CLOCK_HHMM_STD 0
+#define CLOCK_GLOBAL_CLOCK_HHMMSS_STD 1
+#define CLOCK_GLOBAL_CLOCK_HHMM_MORPH 2
+#define CLOCK_GLOBAL_CLOCK_HHMMSS_MORPH 3
+int clk_global_clock_mode=0;
 
 #define CLOCK_MODE_TIME_FONT1 0
 #define CLOCK_MODE_TIME_MORPHING 1
@@ -214,7 +221,7 @@ char contentTypes[][2][32] = {
 // The HTTPS Server comes in a separate namespace. For easier use, include it here.
 using namespace httpsserver;
 
-
+void webSendFileData(char *filename,HTTPResponse *response);
 HTTPServer *webServer;
 
 char wifi_ssid[64];
@@ -1304,7 +1311,9 @@ void checkBrightness() {
 void applyConfChanges() {
   //check brightness
   checkBrightness();
-  gif_delay_before_restart = clk_global_display_time_delay;
+  //update color
+  update_clock_color();
+  gif_delay_before_restart = clk_global_display_time_duration;
   matrixLayer.setBrightness(clock_brightness);
   config_savetosd();
 }
@@ -1399,6 +1408,12 @@ void handleUpdateConfig(HTTPRequest * req, HTTPResponse * res) {
       clock_alarm_weekday_minute[i]=int_val2;      
     }
 
+    //Alarm volume
+    int_val=d->search("alarmvol").toInt();
+    if (int_val<0) int_val=0;
+    if (int_val>31) int_val=31;
+    clock_alarm_volume=int_val;
+
     for (int i=0;i<gifs_dir_total;i++) {
       //Active GIFs directories
       sprintf(str_tmp,"cbgd-%d",i+1);
@@ -1406,7 +1421,29 @@ void handleUpdateConfig(HTTPRequest * req, HTTPResponse * res) {
       else int_val=0;
       clock_gifs_anim_dir_activate[i]=int_val;       
     }
-    
+
+    //clock_color_mode
+    int_val=d->search("clk_color").toInt();
+    if (int_val<0) int_val=0;
+    if (int_val>5) int_val=5;
+    clock_color_mode=int_val;
+
+    //clk_global_display_time_duration
+    int_val=d->search("clk_display_duration").toInt();
+    if (int_val<0) int_val=0;    
+    clk_global_display_time_duration=int_val;
+
+    //clk_global_mp3_timermode_duration
+    int_val=d->search("clk_mp3_timer").toInt();
+    if (int_val<0) int_val=0;    
+    clk_global_mp3_timermode_duration=int_val;
+
+    //clk_global_clock_mode
+    int_val=d->search("clockmode").toInt();
+    if (int_val<0) int_val=0;
+    if (int_val>3) int_val=3;
+    clk_global_clock_mode=int_val;
+        
     res->setHeader("Content-Type", "text/html");
     //take into account changes
     applyConfChanges();
@@ -1416,7 +1453,7 @@ void handleUpdateConfig(HTTPRequest * req, HTTPResponse * res) {
     res->println("Error");
   }
   delete d;  
-  Serial.printf("Ended\nTotal RAM: %d / available: %d / max allocatable: %d\n", ESP.getHeapSize(), ESP.getFreeHeap(), ESP.getMaxAllocHeap());
+  //Serial.printf("Ended\nTotal RAM: %d / available: %d / max allocatable: %d\n", ESP.getHeapSize(), ESP.getFreeHeap(), ESP.getMaxAllocHeap());
 }
 
 void handleTestAlarm(HTTPRequest * req, HTTPResponse * res) {
@@ -1445,15 +1482,18 @@ void handleSPIFFS(HTTPRequest * req, HTTPResponse * res) {
   // We only handle GET here
   if (req->getMethod() == "GET") {
     // Redirect / to /index.html
-    std::string reqFile = req->getRequestString()=="/" ? "/index.html" : req->getRequestString();
+    std::string reqFile = req->getRequestString()=="/" ? "/menu.html" : req->getRequestString();
     std::string filename;
     // Try to open the file
     if (reqFile.at(0)!='/') filename = std::string("/") + reqFile;
     else filename = reqFile;
     Serial.printf("accessing: %s\n",filename.c_str());
 
+    int file_exist=0; //1: exist, 2:exist & compressed with gzip
+    if (SPIFFS.exists(filename.c_str())) file_exist=1;
+    if (SPIFFS.exists((filename+".gz").c_str())) file_exist=2;
     // Check if the file exists
-    if (!SPIFFS.exists(filename.c_str())) {
+    if (!file_exist) {
       // Send "404 Not Found" as response, as the file doesn't seem to exist
       res->setStatusCode(404);
       res->setStatusText("Not found");
@@ -1462,8 +1502,13 @@ void handleSPIFFS(HTTPRequest * req, HTTPResponse * res) {
       Serial.printf("KO\n");
       return;
     }
-    
-    File file = SPIFFS.open(filename.c_str());
+
+    File file;
+    if (file_exist==1) file = SPIFFS.open(filename.c_str());
+    else {
+      file = SPIFFS.open((filename+".gz").c_str());      
+      res->setHeader("Content-Encoding","gzip");
+    }
 
     // Set length
     res->setHeader("Content-Length", httpsserver::intToString(file.size()));
@@ -1502,9 +1547,12 @@ void handle404(HTTPRequest * req, HTTPResponse * res) {
   // Discard request body, if we received any
   // We do this, as this is the default node and may also server POST/PUT requests
   req->discardRequestBody();
-
   // Set the response status
   res->setStatusCode(404);
+  res->setHeader("Content-Type", "text/html");
+  webSendFileData("/menu.html",res);
+
+/*
   res->setStatusText("Not Found");
 
   // Set content type of the response
@@ -1516,6 +1564,7 @@ void handle404(HTTPRequest * req, HTTPResponse * res) {
   res->println("<head><title>Not Found</title></head>");
   res->println("<body><h1>404 Not Found</h1><p>The requested resource was not found on this server.</p></body>");
   res->println("</html>");
+  */
 }
 
 void handleStartMP3(HTTPRequest * req, HTTPResponse * res) {
@@ -1556,12 +1605,12 @@ void webSendFileData(char *filename,HTTPResponse *response) {
   }
   file.close();
 }
-void handleRoot(HTTPRequest * req, HTTPResponse * res) {  
+void handleConfig(HTTPRequest * req, HTTPResponse * res) {  
   // Status code is 200 OK by default.
   // We want to deliver a simple HTML page, so we send a corresponding content type:
   res->setHeader("Content-Type", "text/html");
 
-  webSendFileData("/index.html",res);
+  webSendFileData("/config.html",res);
   /////////////////////
   // GIF Directories
   /////////////////////
@@ -1575,7 +1624,7 @@ void handleRoot(HTTPRequest * req, HTTPResponse * res) {
   for (int j=0;j<mp3_TotalAvailableAlarmFiles;j++) {
     mp3_getMusicTitle(MP3_ALARM, j, small_buff, 64);
     for (int i=0;i<7;i++) {      
-      res->printf("$('#mp3al-%d').append('<option>%s</option>');\n",i+1,small_buff);          
+      res->printf("$('#mp3al-%d').append('<option value=\"%d\">%s</option>');\n",i+1,j+1,small_buff);          
     }
   }
 
@@ -1598,11 +1647,25 @@ void handleRoot(HTTPRequest * req, HTTPResponse * res) {
   }
 
   for (int i=0;i<gifs_dir_total;i++) {    
-    res->printf("document.getElementById('cbgd-%d').checked=%d;\n",i+1,clock_gifs_anim_dir_activate[i]);            
+    res->printf("document.getElementById('cbgd-%d').checked=%d;\n",i+1,clock_gifs_anim_dir_activate[i]);
   }
-  
+
+  res->printf("document.getElementById('alarmvol').value=%d\n",clock_alarm_volume);
+  res->printf("document.getElementById('clk_color').selectedIndex=%d\n",clock_color_mode);
+  res->printf("document.getElementById('clk_display_duration').value=%d\n",clk_global_display_time_duration);
+  res->printf("document.getElementById('clk_mp3_timer').value=%d\n",clk_global_mp3_timermode_duration);
+  res->printf("document.getElementById('clockmode').selectedIndex=%d\n",clk_global_clock_mode);
+   
   res->printf("</script></body></html>");
 }
+
+void handleRoot(HTTPRequest * req, HTTPResponse * res) {  
+  // Status code is 200 OK by default.
+  // We want to deliver a simple HTML page, so we send a corresponding content type:
+  res->setHeader("Content-Type", "text/html");
+  webSendFileData("/menu.html",res);
+}
+
 
 void wifiOnConnect() {
   Serial.println("wifi connected");
@@ -1753,7 +1816,7 @@ void config_loadfromsd() {
       } else if (strncmp(str_tmp,"Display time:",strlen("Display time:"))==0) {
         Serial.println("Got Display time");
         index=strlen("Display time:");
-        sscanf(&str_tmp[index],"%d",&clk_global_display_time_delay);        
+        sscanf(&str_tmp[index],"%d",&clk_global_display_time_duration);        
         index=0;
       } else if (strncmp(str_tmp,"MP3 timer duration:",strlen("MP3 timer duration:"))==0) {
         Serial.println("Got MP3 timer duration");
@@ -1775,10 +1838,15 @@ void config_loadfromsd() {
         index=strlen("Alarm volume:");
         sscanf(&str_tmp[index],"%d",&clock_alarm_volume);        
         index=0;
+      } else if (strncmp(str_tmp,"Clock mode:",strlen("Clock mode:"))==0) {
+        Serial.println("Got Clock mode");
+        index=strlen("Clock mode:");
+        sscanf(&str_tmp[index],"%d",&clk_global_clock_mode);        
+        index=0;
       } else {       
         Serial.println("Unknown entry");
       }
-    }  
+    }    
   }
   configFile.close();
   //gif_file_buffer_current_size = gif_file.read(gif_file_buffer, GIF_FILE_BUFFER_SIZE); //READ NEW BUFFER
@@ -1801,7 +1869,7 @@ void config_savetosd() {
   sprintf(str_tmp,"Hostname:%s\n",clk_global_hostname);
   configFile.write((byte*)str_tmp, strlen(str_tmp));
 
-  sprintf(str_tmp,"Display time:%d\n",clk_global_display_time_delay);
+  sprintf(str_tmp,"Display time:%d\n",clk_global_display_time_duration);
   configFile.write((byte*)str_tmp, strlen(str_tmp));
   
   sprintf(str_tmp,"MP3 timer duration:%d\n",clk_global_mp3_timermode_duration);
@@ -1814,6 +1882,9 @@ void config_savetosd() {
   configFile.write((byte*)str_tmp, strlen(str_tmp));
 
   sprintf(str_tmp,"Alarm volume:%d\n",clock_alarm_volume);
+  configFile.write((byte*)str_tmp, strlen(str_tmp));
+
+  sprintf(str_tmp,"Clock mode:%d\n",clk_global_clock_mode);
   configFile.write((byte*)str_tmp, strlen(str_tmp));
 
   sprintf(str_tmp,"GIF schedule:");
@@ -1898,13 +1969,15 @@ void config_setdefault() {
 
   for (int i=0;i<GIFS_ANIM_DIR_MAX;i++) clock_gifs_anim_dir_activate[i]=1;
 
+  clk_global_clock_mode=CLOCK_GLOBAL_CLOCK_HHMM_STD;
+
   clock_brightness = DEFAULT_BRIGHTNESS;
   clock_color_mode = 0; //GREEN
   clock_mode_time = DEFAULT_CLOCK_MODE_TIME;
   clock_mode_mp3 = DEFAULT_CLOCK_MODE_MP3;
   clock_alarm_status=ALARM_OFF;
   
-  clk_global_display_time_delay = CLOCK_DELAY_BEFORE_ANIM;
+  clk_global_display_time_duration = CLOCK_DELAY_BEFORE_ANIM;
 
   clk_global_mp3_timermode_duration=CLOCK_MODE_MP3_TIMER_DELAY;
 
@@ -2004,13 +2077,15 @@ void setup() {
     // For every resource available on the server, we need to create a ResourceNode
     // The ResourceNode links URL and HTTP method to a handler function
     ResourceNode * spiffsNode = new ResourceNode("/*", "GET" , &handleSPIFFS);
-    ResourceNode * nodeRoot    = new ResourceNode("/", "GET", &handleRoot);
+    //ResourceNode * nodeRoot    = new ResourceNode("/", "GET", &handleRoot);
+    ResourceNode * nodeConfig    = new ResourceNode("/config.html", "GET", &handleConfig);
     ResourceNode * nodeUpdateConfig = new ResourceNode("/update_config", "POST", &handleUpdateConfig);
     ResourceNode * nodeTestAlarm = new ResourceNode("/testAlarm", "POST", &handleTestAlarm);
     ResourceNode * node404     = new ResourceNode("", "GET", &handle404);
 
     // Add the root node to the server
-    webServer->registerNode(nodeRoot);
+    //webServer->registerNode(nodeRoot);
+    webServer->registerNode(nodeConfig);
     webServer->registerNode(nodeTestAlarm);    
     webServer->registerNode(nodeUpdateConfig);
     webServer->registerNode(spiffsNode);
@@ -2211,7 +2286,7 @@ void setup() {
   timerAlarmEnable(timerFPS);
 
   gif_in_progress = 0;
-  gif_delay_before_restart = clk_global_display_time_delay;
+  gif_delay_before_restart = clk_global_display_time_duration;
   unsigned long time_beg, time_end;
   time_beg = millis();
 
@@ -2861,14 +2936,14 @@ void loop() {
             clock_current_display = CLOCK_DISPLAY_AUDIO_SPECTRUM;
           }
           else clock_current_display = CLOCK_DISPLAY_TIME_WITH_BG_ANIM;
-          gif_delay_before_restart = clk_global_display_time_delay;
+          gif_delay_before_restart = clk_global_display_time_duration;
         }
       } else { //BOOT ANIM in progress
         result = decoder.decodeFrame();
         if ((result != ERROR_WAITING) && (result != ERROR_NONE)) { //Done with anim
           gif_file.close();
           gif_in_progress = 0;
-          gif_delay_before_restart = clk_global_display_time_delay;
+          gif_delay_before_restart = clk_global_display_time_duration;
           if (mp3_isPlaying) {
             clock_current_display_switch = 0;
             if (clock_current_display_switch & 1) clock_current_display = CLOCK_DISPLAY_TIME_WITH_BG_ANIM;
@@ -2934,7 +3009,7 @@ void loop() {
             else clock_current_display = CLOCK_DISPLAY_AUDIO_SPECTRUM;
           } else clock_current_display = CLOCK_DISPLAY_TIME_WITH_BG_ANIM;
           gif_in_progress = 0;
-          gif_delay_before_restart = clk_global_display_time_delay;
+          gif_delay_before_restart = clk_global_display_time_duration;
           screenClearCallback();
           clock_draw_msg();
           clock_draw_time(0);
@@ -2961,7 +3036,7 @@ void loop() {
             if (clock_current_display_switch & 1) clock_current_display = CLOCK_DISPLAY_TIME_WITH_BG_ANIM;
             else clock_current_display = CLOCK_DISPLAY_AUDIO_SPECTRUM;
           } else clock_current_display = CLOCK_DISPLAY_TIME_WITH_BG_ANIM;
-          gif_delay_before_restart = clk_global_display_time_delay;
+          gif_delay_before_restart = clk_global_display_time_duration;
           Serial.printf("Could not launch new gif\n");
         }
       }

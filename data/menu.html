@@ -1,0 +1,76 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YoyoFR Clock</title>
+  <link rel="stylesheet" href="jquery-ui.min.css">
+  <link rel="stylesheet" href="jquery-ui.theme.min.css">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">  
+  <script type="text/javascript" src="jquery.min.js"></script>
+  <script type="text/javascript" src="jquery-ui.min.js"></script>
+  
+  
+  <script>
+    $(document).ready(function(){
+        $("#configBtn").click(function(){    
+            location.href="/config.html";
+        });
+
+        $("#playerBtn").click(function(){        
+            location.href="/player.html";
+        });
+    });
+    $( function() {
+        $( ".controlgroup-vertical" ).controlgroup({
+            "direction": "vertical"
+        });
+    } );
+ </script>
+    <style>
+        h1 {
+            margin:auto;
+            text-align: center;
+            color:darkblue;
+        }
+
+        .align-center {
+           display: block;
+            margin: 1.0em auto;
+            text-align: center;
+        }
+
+        fieldset {
+            width:10em;
+            border:0;
+            margin:auto;              
+        }
+        fieldset .ui-button {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+        
+
+    </style>
+</head>
+<body>
+ 
+<div class="widget">
+  
+        <h1>YoyoFR Clock</h1>
+       <fieldset class="align-center">
+        <button class="ui-button ui-widget ui-corner-all" type="button" id="configBtn">
+            <span class="ui-icon ui-icon-gear" id="configBtnIcon"></span>Config
+        </button>
+        
+        <button class="ui-button ui-widget ui-corner-all" type="button" id="playerBtn">
+            <span class="ui-icon ui-icon-play" id="playerBtnIcon"></span>
+            Player
+        </button>
+    </fieldset>
+  
+</div>
+<script type="text/javascript">
+       
+</script>
+</body>
+</html>

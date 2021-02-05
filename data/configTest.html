@@ -9,10 +9,14 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">  
   <script type="text/javascript" src="jquery.min.js"></script>
   <script type="text/javascript" src="jquery-ui.min.js"></script>
+  <script src="jquery.ui.touch-punch.min.js"></script>
   <script type="text/javascript" src="moment.min.js"></script>
   <script type="text/javascript" src="bootstrap-material-dtp.min.js"></script>
   <script>
     $(document).ready(function(){
+
+        $('#widget').draggable();
+
         $("#submitBtn").click(function(){    
             $.ajax({
                 method: "POST",
@@ -20,13 +24,13 @@
                 data: $("#configForm").serialize(), // serializes the form's elements.       
                 success: function(data)
                 {
-                alert(data); // show response from the php script.
+                    alert(data); // show response from the php script.
                 }
             });
         });
 
         $("#backHomeBtn").click(function(){        
-            location.href="/";
+            location.href="/menu.html";
         });
     });
     $( function() {
@@ -34,7 +38,19 @@
             icon: false
         });
         $( "fieldset" ).controlgroup();
+
+        $( "#slider-alarmvol" ).slider({
+            range: "max",
+            min: 0,
+            max: 31,
+            value: document.getElementById('alarmvol').value,
+            slide: function( event, ui ) {
+                    $( "#alarmvol" ).val( ui.value );
+            }
+        });
+        $( "#alarmvol" ).val( $( "#slider-alarmvol" ).slider( "value" ) );
     } );
+    
     function limit(element) {
         var max_chars = 3;
 
@@ -49,23 +65,23 @@
   
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            width:320px;
+            font-family: Arial, Helvetica, sans-serif;  
+            max-width: 21em;          
         }    
         .gif_schedule {
-            width:18em;
+            width:19em;
         }
         .gif_schedule label,.gif_schedule input {
             font-size:10;
         }
         .music_schedule {
-            width:18em;
+            width:19em;
         }
         .music_schedule label,.music_schedule input {
             font-size:10;
         }
         .brightness_schedule {
-            width:18em;
+            width:19em;
         }
         .brightness_schedule label {
             font-size:10;
@@ -74,60 +90,85 @@
         .brightness_schedule input {
             font-size:12;
             width:4em;    
-        }
-        
+        }        
         .alarms_schedule {
-            width:18em;
+            width:19em;            
         }
         .alarms_schedule label {
-            float: left;   
-            font-size:6;
+            font-size:6;            
         }
         .alarms_schedule input {
-            float: left;   
-            font-size:13;
         }
         .alarms_schedule .txtAlarmTime {
             font-size:11;
-            width:3.5em;
+            width:4em;            
+            float:none !important;
+        }
+        .alarms_schedule #AlarmVolume label {
+            font-size:12;
         }
         .cbalarmlbl {        
-            width:7em;        
+            float:none !important;
+            width:4em;
+            display: inline-block;
         }
         .txtAlarmLbl {
-            font-size:16;        
+            font-size:12;
+            float:none !important;
         }    
-        .txtGifDirLbl {
-            font-size:14;        
-        }     
+        .btnalarm {
+            font-size:0.75em;        
+            float:none !important;
+        }
+        .alarms_schedule .ui-selectmenu-button.ui-button {                
+            width: 13em;
+            font-size:10;
+            float:none !important;
+        }
+        #slider-alarmvol {
+            
+        }
         .gifdirs_schedule{        
-            width:18em;
+            width:19em;
         }
         .gifdirs_schedule label {
             font-size:6;        
         }
-        .btnalarm {
-            font-size:0.75em;
-        float:right;
+        .txtGifDirLbl {
+            font-size:14;        
+        }     
+        .general_settings {
+            width:19em;            
         }
-        .mp3alarm, .ui-selectmenu-button.ui-button {    
-            width: 12em;
-            font-size:10;        
+        .general_settings label {
+            width:10em;            
+            display:inline-block;
         }
+        .general_settings .ui-selectmenu-button.ui-button {                
+            width:10em;
+            font-size:10;
+            float:none !important;
+        }
+        #clk_display_duration,#clk_mp3_timer {
+            width:4em;                        
+        }
+                
         #submitBtn {
-            width:7em;
+            width:8em;
             font-size:14;
             height:4em;
             float: left;
             margin: 0 auto;            
+
         }
         #backHomeBtn {
-            width:7em;
+            width:8em;
             font-size:14;
             height:4em;
             float: right;
-            margin: 0 auto;            
+            margin: 0 auto;                        
         }
+        
         #submitBtnIcon {
             zoom: 150%; 
             -moz-transform: scale(1.5); 
@@ -145,7 +186,7 @@
         font-family: 'Material Icons';
         font-style: normal;
         font-weight: 400;
-        src: url("http://yoyofr92.free.fr/yoyofrclk/Material-Design-Icons.woff2") format('woff2');
+        src: url("Material-Design-Icons.woff2") format('woff2');
         }
 
         .material-icons {
@@ -337,21 +378,21 @@
     </div>
   </fieldset>
   <fieldset class="alarms_schedule">
+
       <legend>Alarms</legend>    
       <div>
         <input type="checkbox" name="cbal-1" id="cbal-1">
         <label for="cbal-1" ></label>        
         <input class="txtAlarmTime" type="text" name="al-1" id="al-1" value="07:15">
-        <label class="cbalarmlbl" for="al-1" ><text class="txtAlarmLbl">Dim.</text></label>
-    
-    <select class="mp3alarm" name="mp3al-1" id="mp3al-1">
-        <option>random</option>
-    </select>
-    <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-1">
-        <span class="ui-icon ui-icon-play"></span>icon only
-    </button>
+        <label class="cbalarmlbl" for="al-1" ><text class="txtAlarmLbl">Dim.</text></label>    
+        <select class="mp3alarm" name="mp3al-1" id="mp3al-1">
+            <option value="0">random</option>
+        </select>
+        <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-1">
+            <span class="ui-icon ui-icon-play"></span>icon only
+        </button>
 </div>
-    <div>
+    <div> 
         <input type="checkbox" name="cbal-2" id="cbal-2">
         <label for="cbal-2" ></label>
         <input class="txtAlarmTime" type="text" name="al-2" id="al-2" value="07:15">        
@@ -359,7 +400,7 @@
 
     
     <select class="mp3alarm" name="mp3al-2" id="mp3al-2">
-        <option>random</option>
+        <option value="0">random</option>
     </select>
     <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-2">
         <span class="ui-icon ui-icon-play"></span>icon only
@@ -372,7 +413,7 @@
         <label class="cbalarmlbl" for="al-3"><text class="txtAlarmLbl">Mar.</text></label>
     
     <select class="mp3alarm" name="mp3al-3" id="mp3al-3">
-        <option>random</option>
+        <option value="0">random</option>
     </select>
     <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-3">
         <span class="ui-icon ui-icon-play"></span>icon only
@@ -385,7 +426,7 @@
     <label class="cbalarmlbl" for="al-4"><text class="txtAlarmLbl">Mer.</text></label>
     
     <select class="mp3alarm" name="mp3al-4" id="mp3al-4">
-        <option>random</option>
+        <option value="0">random</option>
     </select>
     <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-4">
         <span class="ui-icon ui-icon-play"></span>icon only
@@ -399,7 +440,7 @@
     <label class="cbalarmlbl" for="al-5"><text class="txtAlarmLbl">Jeu.</text></label>
     
     <select class="mp3alarm" name="mp3al-5" id="mp3al-5">
-        <option>random</option>
+        <option value="0">random</option>
     </select>
     <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-5">
         <span class="ui-icon ui-icon-play"></span>icon only
@@ -413,7 +454,7 @@
     <label class="cbalarmlbl" for="al-6"><text class="txtAlarmLbl">Ven.</text></label>
     
     <select class="mp3alarm" name="mp3al-6" id="mp3al-6">
-        <option>random</option>
+        <option value="0">random</option>
     </select>
     <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-6">
         <span class="ui-icon ui-icon-play"></span>icon only
@@ -426,22 +467,58 @@
     <label class="cbalarmlbl" for="al-7"><text class="txtAlarmLbl">Sam.</text></label>
 
     <select class="mp3alarm" name="mp3al-7" id="mp3al-7">
-        <option>random</option>
+        <option value="0">random</option>
     </select>
     <button class="btnalarm ui-button ui-widget ui-corner-all ui-button-icon-only" type="button" id="btnal-7">
         <span class="ui-icon ui-icon-play"></span>icon only
     </button>
 </div>
+    <div id="AlarmVolume">
+        <label for="alarmvol">Alarm volume:</label>
+        <input type="text" id="alarmvol" name="alarmvol" readonly style="border:0; font-weight:bold;">
+        <div id="slider-alarmvol"></div>
+    </div>
+  </fieldset>
+  <fieldset class="general_settings">
+    <legend>Clock general settings</legend>
+    <div>
+      
+      <label for="clk_color">Display color</label>
+      <select id="clk_color" name="clk_color">
+          <option value="0">Green</option>
+          <option value="1">Blue</option>
+          <option value="2">Red</option>
+          <option value="3">Pink</option>
+          <option value="4">Yellow</option>
+          <option value="5">White</option>
+      </select>
+    </div>
+      <div><label for="clk_display_duration">Time display duration:</label>
+      <input type="text" id="clk_display_duration" name="clk_display_duration" value=0>
+    </div>
+        <div>
+      <label for="clk_mp3_timer">MP3 Timer duration:</label>
+      <input type="text" id="clk_mp3_timer" name="clk_mp3_timer" value=0>
+    </div>
+    <div>        
+        <label for="clockmode">Clock mode</label>
+        <select id="clockmode" name="clockmode">
+            <option value="0">HH:MM Standard</option>
+            <option value="1">HH:MM:SS Standard</option>
+            <option value="2">HH:MM Morphing</option>
+            <option value="3">HH:MM:SS Morphing</option>            
+        </select>
+      </div>
   </fieldset>
 
 
-  <fieldset  class="gifdirs_schedule" id="gifdirs_schedule_list">
+  <fieldset class="gifdirs_schedule" id="gifdirs_schedule_list">
     <legend>Active GIFs directories</legend>
   </fieldset>
 
     <div>
         <button class="ui-button ui-widget ui-corner-all" type="button" id="submitBtn">
-            <span class="ui-icon ui-icon-disk" id="submitBtnIcon"></span>Save</button>
+            <span class="ui-icon ui-icon-disk" id="submitBtnIcon"></span>Apply</button>
         
         <button class="ui-button ui-widget ui-corner-all" type="button" id="backHomeBtn">
             <span class="ui-icon ui-icon-home" id="backHomeBtnIcon"></span>
@@ -590,3 +667,36 @@
                     }
                 });
             });
+      
+            ///////////////////////////////////////////////////////
+            //INIT Value, to be managed from ESP32 code
+            //GIF daily schedule - should cover the 24 ID
+            ///////////////////////////////////////////////////////
+            document.getElementById('cbgif-1').checked=0;
+            //MP3 daily schedule - should cover the 24 ID
+            document.getElementById('cbMP3-1').checked=0;            
+            //Brightness daily schedule - should cover the 24 ID
+            document.getElementById('BrightT-1').value=16;            
+            //ALARM - should cover the 7 ID
+            document.getElementById('mp3al-1').selectedIndex=0;
+            document.getElementById('al-1').value='09:32';
+            document.getElementById('cbal-1').checked=0;
+            document.getElementById('mp3al-2').selectedIndex=2;
+            document.getElementById('al-2').value='20:45';
+            document.getElementById('cbal-2').checked=1;
+            document.getElementById('mp3al-3').selectedIndex=1;
+            document.getElementById('al-3').value='12:38';
+            document.getElementById('cbal-3').checked=0;
+            document.getElementById('alarmvol').value=3;
+            //GIFs Directories - should cover all dir
+            $("#gifdirs_schedule_list").append('<div><input type="checkbox" name="cbgifdir-1" id="cbgifdir-1"><label for="cbgifdir-1" ></label><text class="txtGifDirLbl">GIFDIR1</text></div>');
+            $("#gifdirs_schedule_list").append('<div><input type="checkbox" name="cbgifdir-2" id="cbgifdir-2"><label for="cbgifdir-2" ></label><text class="txtGifDirLbl">GIFDIR2</text></div>');
+            $("#gifdirs_schedule_list").append('<div><input type="checkbox" name="cbgifdir-3" id="cbgifdir-3"><label for="cbgifdir-3" ></label><text class="txtGifDirLbl">GIFDIR3</text></div>');
+            //General clock
+            document.getElementById('clk_color').selectedIndex=2;
+            document.getElementById('clk_display_duration').value=20;
+            document.getElementById('clk_mp3_timer').value=20;
+            document.getElementById('clockmode').selectedIndex=2;
+		</script>
+</body>
+</html>
