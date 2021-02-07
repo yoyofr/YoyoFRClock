@@ -10203,3 +10203,47 @@
 10:31:25.713 > Total RAM: 331280 / available: 121412 / max allocatable: 62468
 10:31:35.660 > Wifi connected
 10:31:35.662 > Total RAM: 331288 / available: 121436 / max allocatable: 62468
+10:31:45.673 > Wifi connected
+10:31:45.675 > Total RAM: 331368 / available: 121864 / max allocatable: 62468
+10:31:55.684 > Wifi connected
+10:31:55.685 > Total RAM: 331368 / available: 121864 / max allocatable: 62468
+10:31:56.890 > gif decoding late by -69
+10:31:58.025 > gif decoding late by -214
+10:31:59.160 > gif decoding late by -360
+10:32:00.296 > gif decoding late by -505
+10:32:05.655 > Wifi connected
+10:32:05.656 > Total RAM: 331284 / available: 121420 / max allocatable: 62468
+10:32:15.654 > Wifi connected
+10:32:15.656 > Total RAM: 331284 / available: 121420 / max allocatable: 62468
+10:32:25.655 > Wifi connected
+10:32:25.656 > Total RAM: 331280 / available: 121412 / max allocatable: 62468
+10:32:35.665 > Wifi connected
+10:32:35.666 > Total RAM: 331368 / available: 121864 / max allocatable: 62468
+10:32:45.682 > Wifi connected
+10:32:45.684 > Total RAM: 331368 / available: 121864 / max allocatable: 62468
+10:32:55.659 > Wifi connected
+10:32:55.660 > Total RAM: 331280 / available: 121408 / max allocatable: 62468
+10:32:55.667 > reinit time from NTP
+10:32:58.309 > gif decoding late by -125
+10:32:59.445 > gif decoding late by -271
+10:33:00.580 > gif decoding late by -416
+10:33:01.716 > gif decoding late by -562
+10:33:02.851 > gif decoding late by -707
+10:33:03.986 > gif decoding late by -853
+10:33:05.122 > gif decoding late by -998
+10:33:05.672 > Wifi connected
+10:33:05.673 > Total RAM: 331368 / available: 121864 / max allocatable: 62468
+10:33:15.659 > Wifi connected
+10:33:15.661 > Total RAM: 331368 / available: 121864 / max allocatable: 62468
+10:33:25.654 > Wifi connected
+10:33:25.656 > Total RAM: 331284 / available: 121420 / max allocatable: 62468
+10:33:35.653 > Wifi connected
+10:33:35.655 > Total RAM: 331284 / available: 121420 / max allocatable: 62468
+10:33:45.181 > gif decoding late by -155
+10:33:45.662 > Wifi connected
+10:33:45.662 > Total RAM: 331288 / available: 121428 / max allocatable: 62468
+10:33:46.316 > gif decoding late by -300
+10:33:47.451 > gif decoding late by -445
+10:33:48.587 > gif decoding late by -591
+10:33:49.722 > gif decoding late by -736
+10:33:50.858 > gif decoding late by -882
