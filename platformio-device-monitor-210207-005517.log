@@ -1,134 +1,0 @@
-00:55:17.050 > ���0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
-00:55:17.052 > mode:DIO, clock div:2
-00:55:17.054 > load:0x3fff0018,len:4
-00:55:17.056 > load:0x3fff001c,len:1044
-00:55:17.058 > load:0x40078000,len:10124
-00:55:17.060 > load:0x40080400,len:5828
-00:55:17.062 > entry 0x400806a8
-00:55:17.522 > initializing...
-00:55:17.678 > SPIFFS init ok
-00:55:17.752 > SD Card init ok
-00:55:17.859 > Got WIFI SSID
-00:55:17.860 > Got WIFI PSK
-00:55:17.862 > Got Hostname
-00:55:17.863 > Got Display time
-00:55:17.864 > Got MP3 timer duration
-00:55:17.866 > Got Clock color
-00:55:17.868 > Got MP3 volume
-00:55:17.869 > Got Alarm volume
-00:55:17.871 > Got Clock mode
-00:55:17.878 > Got GIF schedule
-00:55:17.878 > Got MP3 schedule
-00:55:17.878 > Got Brightness schedule
-00:55:17.878 > Got Alarms
-00:55:17.879 > Got GIF directories
-00:55:17.880 > Connecting to WiFi Doubidounette_2 OwariMonoDoubiDouNette
-00:55:18.010 > ...Connecting to WiFi
-00:55:18.198 > WiFi connected. IP: 192.168.1.30
-00:55:18.260 > Connected
-00:55:18.262 > 192.168.1.30
-00:55:18.263 > Starting server...
-00:55:18.265 > Server ready.
-00:55:18.266 > 
-00:55:18.266 > Starting SmartMatrix Mallocs
-00:55:18.269 > Heap/32-bit Memory Available: 221488 bytes total, 113792 bytes largest free block
-00:55:18.276 > 8-bit/DMA Memory Available  : 158884 bytes total, 113792 bytes largest free block
-00:55:18.284 > SmartMatrix Layers Allocated from Heap:
-00:55:18.287 > Heap/32-bit Memory Available: 207156 bytes total, 113792 bytes largest free block
-00:55:18.295 > Starting SmartMatrix DMA Mallocs
-00:55:18.297 > sizeof framestruct: 00004000
-00:55:18.300 > DMA Memory Available before ptr1 alloc: 111472 bytes total,  80992 bytes largest free block
-00:55:18.308 > matrixUpdateFrames[0] pointer: 3FFE4374
-00:55:18.312 > DMA Memory Available before ptr2 alloc: 111472 bytes total,  80992 bytes largest free block
-00:55:18.320 > matrixUpdateFrames[1] pointer: 3FFE8384
-00:55:18.330 > Frame Structs Allocated from Heap:
-00:55:18.330 > Heap/32-bit Memory Available: 173940 bytes total,  80992 bytes largest free block
-00:55:18.334 > 8-bit/DMA Memory Available  : 111472 bytes total,  80992 bytes largest free block
-00:55:18.346 > Allocating refresh buffer:
-00:55:18.346 > lsbMsbTransitionBit of 0 requires 49152 RAM, 80992 available, leaving 31840 free: 
-00:55:18.351 > lsbMsbTransitionBit of 1 requires 24576 RAM, 80992 available, leaving 56416 free: 
-00:55:18.363 > Raised lsbMsbTransitionBit to 1/7 to fit in RAM
-00:55:18.363 > lsbMsbTransitionBit of 1 gives 203 Hz refresh, 120 requested: 
-00:55:18.368 > Raised lsbMsbTransitionBit to 1/7 to meet minimum refresh rate
-00:55:18.374 > Descriptors for lsbMsbTransitionBit 1/7 with 16 rows require 24576 bytes of DMA RAM
-00:55:18.382 > SmartMatrix Mallocs Complete
-00:55:18.384 > Heap/32-bit Memory Available: 149328 bytes total,  80992 bytes largest free block
-00:55:18.391 > 8-bit/DMA Memory Available  :  86860 bytes total,  80992 bytes largest free block
-00:55:18.902 > Setting up parallel I2S bus at I2S1
-00:55:18.922 > Framebuffer_GFX::begin Width: 64 Height: 32 Num Pixels: 2048
-00:55:19.072 > smartmatrix setup done
-00:55:20.886 > mp3 music/Audiobook/alarm files: 583/614/10
-00:55:20.904 > Init time from NTP
-00:55:21.596 > gif decoder done
-00:55:21.652 > Gifs | found dir: Other
-00:55:21.661 > Gifs | found dir: Arcade
-00:55:21.671 > Gifs | found dir: Backgrounds
-00:55:21.681 > Gifs | found dir: Bootlogos
-00:55:21.690 > Gifs | found dir: Computers
-00:55:21.700 > Gifs | found dir: Consoles
-00:55:21.710 > Gifs | found dir: Demoscene
-00:55:21.719 > Gifs | found dir: Halloween
-00:55:22.955 > Gifs files total: 3472 files
-00:55:22.969 > Bootlogos gifs files total: 4 files
-00:55:22.987 > Background gifs files total: 12 files
-00:55:22.997 > Gif browsing took: 1371 ms
-00:55:23.000 > min band: 0 max_band: 24
-00:55:23.045 > Heap/32-bit Memory Available     : 122764 bytes total, 62468 bytes largest free block
-00:55:23.053 > 8-bit/malloc/DMA Memory Available: 60296 bytes total, 58368 bytes largest free block
-00:55:27.200 > gif decoding late by -18
-00:55:28.012 > gif decoding late by -69
-00:55:28.734 > gif decoding late by -132
-00:55:29.383 > gif decoding late by -121
-00:55:30.104 > gif decoding late by -183
-00:55:30.753 > gif decoding late by -172
-00:55:31.447 > gif decoding late by -205
-00:55:31.638 > Wifi connected
-00:55:31.640 > Total RAM: 331328 / available: 122616 / max allocatable: 62468
-00:55:32.228 > gif decoding late by -327
-00:55:32.891 > gif decoding late by -330
-00:55:41.640 > Wifi connected
-00:55:41.642 > Total RAM: 331408 / available: 123060 / max allocatable: 62468
-00:55:42.510 > SPIFFS access required
-00:55:42.512 > accessing: /ui-bg_gl_100_e4f1fb_1x400.png
-00:55:42.606 > SPIFFS access required
-00:55:42.608 > accessing: /ui-icons_2694e8_256x240.png
-00:55:43.319 > SPIFFS access required
-00:55:43.321 > accessing: /menu.html
-00:55:43.705 > SPIFFS access required
-00:55:43.708 > accessing: /jquery-ui.min.css
-00:55:44.095 > SPIFFS access required
-00:55:44.267 > accessing: /jquery-ui.theme.min.css
-00:55:44.373 > SPIFFS access required
-00:55:44.376 > accessing: /jquery.min.js
-00:55:44.591 > SPIFFS access required
-00:55:44.594 > accessing: /jquery-ui.min.js
-00:55:45.070 > SPIFFS access required
-00:55:45.073 > accessing: /ui-bg_gl_80_d7ebf9_1x400.png
-00:55:45.122 > SPIFFS access required
-00:55:45.124 > accessing: /ui-icons_3d80b3_256x240.png
-00:55:45.383 > SPIFFS access required
-00:55:45.385 > accessing: /favicon.ico
-00:55:51.625 > Wifi connected
-00:55:51.627 > Total RAM: 331168 / available: 121704 / max allocatable: 62468
-00:56:01.625 > Wifi connected
-00:56:01.626 > Total RAM: 331164 / available: 121688 / max allocatable: 62468
-00:56:03.194 > gif decoding late by -110
-00:56:04.005 > gif decoding late by -261
-00:56:04.816 > gif decoding late by -412
-00:56:05.634 > gif decoding late by -570
-00:56:06.438 > gif decoding late by -714
-00:56:07.249 > gif decoding late by -865
-00:56:11.671 > Wifi connected
-00:56:11.673 > Total RAM: 331164 / available: 121688 / max allocatable: 62468
-00:56:21.625 > Wifi connected
-00:56:21.627 > Total RAM: 331164 / available: 121688 / max allocatable: 62468
-00:56:31.626 > Wifi connected
-00:56:31.628 > Total RAM: 331168 / available: 121688 / max allocatable: 62468
-00:56:41.634 > Wifi connected
-00:56:41.636 > Total RAM: 331164 / available: 121684 / max allocatable: 62468
-00:56:51.636 > Wifi connected
-00:56:51.639 > Total RAM: 331164 / available: 121684 / max allocatable: 62468
-00:57:01.639 > Wifi connected
-00:57:01.641 > Total RAM: 331168 / available: 121688 / max allocatable: 62468
-00:57:11.647 > Wifi connected
-00:57:11.648 > Total RAM: 331248 / available: 122128 / max allocatable: 62468
