@@ -381,8 +381,8 @@ TaskHandle_t task_fft;
 //unsigned int sampling_period_us;
 //unsigned long microseconds;
 
-double bin_size;
-double BIN_MAX = 240000;
+float bin_size;
+float BIN_MAX = 240000;
 
 #define BAND_MAX 31   //0..BAND_MAX - 1 are the values
 int band_min, band_max;
@@ -390,7 +390,7 @@ int band_min, band_max;
 
 int amin = 4096; int amax = 0;
 
-const double LEDlimit[YMAX] = {
+const float LEDlimit[YMAX] = {
   0.041, 0.049, 0.059, 0.070, 0.084, 0.100, 0.119, 0.143, 0.170, 0.203, 0.242, 0.289, 0.346, 0.412, 0.492, 0.588, 0.702, 0.838, 1.000, 1.413
 };
 
@@ -411,14 +411,14 @@ const int limit[] = {20, 25, 31, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 4
 
 
 int bin_band[samples];
-volatile double fft_bands[BAND_MAX];
-volatile double dc_level;
+volatile float fft_bands[BAND_MAX];
+volatile float dc_level;
 byte dc_level_band;
 byte peak[BAND_MAX];
 byte peak_staytopcnt[BAND_MAX];
 byte peak2[BAND_MAX];
-//double vReal[SAMPLES];
-//double vImag[SAMPLES];
+//float vReal[SAMPLES];
+//float vImag[SAMPLES];
 unsigned long newTime, oldTime;
 int dominant_value;
 
@@ -1478,7 +1478,7 @@ void handleTestAlarm(HTTPRequest * req, HTTPResponse * res) {
 void handle404(HTTPRequest * req, HTTPResponse * res);
 
 void handleSPIFFS(HTTPRequest * req, HTTPResponse * res) {
-  Serial.println("SPIFFS access required");
+  //Serial.println("SPIFFS access required");
   // We only handle GET here
   if (req->getMethod() == "GET") {
     // Redirect / to /index.html
@@ -1487,7 +1487,7 @@ void handleSPIFFS(HTTPRequest * req, HTTPResponse * res) {
     // Try to open the file
     if (reqFile.at(0)!='/') filename = std::string("/") + reqFile;
     else filename = reqFile;
-    Serial.printf("accessing: %s\n",filename.c_str());
+    //Serial.printf("accessing: %s\n",filename.c_str());
 
     int file_exist=0; //1: exist, 2:exist & compressed with gzip
     if (SPIFFS.exists(filename.c_str())) file_exist=1;
@@ -1663,53 +1663,30 @@ void handleRoot(HTTPRequest * req, HTTPResponse * res) {
 }
 
 
-void wifiOnConnect() {
-  Serial.println("wifi connected");
-}
+static void configureWiFi()
+{
+    WiFi.persistent(false);
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
+    WiFi.mode(WIFI_STA);
+    WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
+    WiFi.setHostname(clk_global_hostname);
+    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+        Serial.print("WiFi connected. IP: ");
+        Serial.println(IPAddress(info.got_ip.ip_info.ip.addr));
+        wifi_available=1;
+    },
+        WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
 
-void wifiOnDisconnect() {
-  Serial.println("wifi disconnected");
-}
-void WiFiEvent(WiFiEvent_t event) {
-  switch (event) {
-
-    case SYSTEM_EVENT_AP_START:
-      //can set ap hostname here
-      //WiFi.softAPsetHostname(clk_global_hostname);
-      //enable ap ipv6 here
-      //WiFi.softAPenableIpV6();
-      break;
-
-    case SYSTEM_EVENT_STA_START:
-      //set sta hostname here
-      WiFi.setHostname(clk_global_hostname);
-      Serial.printf("Hostname set to %s\n", clk_global_hostname);
-      break;
-    case SYSTEM_EVENT_STA_CONNECTED:
-      //enable sta ipv6 here
-      WiFi.enableIpV6();
-      break;
-    case SYSTEM_EVENT_AP_STA_GOT_IP6:
-      //both interfaces get the same event
-      Serial.print("STA IPv6: ");
-      Serial.println(WiFi.localIPv6());
-      Serial.print("AP IPv6: ");
-      Serial.println(WiFi.softAPIPv6());
-      break;
-    case SYSTEM_EVENT_STA_GOT_IP:
-      wifiOnConnect();
-      //wifi_connected = true;
-      wifi_available = 1;
-      Serial.println("wifi connected");
-      break;
-    case SYSTEM_EVENT_STA_DISCONNECTED:
-      //wifi_connected = false;      
-      wifi_available = 0;
-      wifiOnDisconnect();
-      break;
-    default:
-      break;
-  }
+    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+        Serial.print("WiFi lost connection. Reason: ");
+        Serial.println(info.disconnected.reason);
+        WiFi.persistent(false);
+        WiFi.disconnect(true);
+        //wifi_available=0;
+        ESP.restart();
+    },
+        WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
 }
 
 void config_loadfromsd() {
@@ -2042,23 +2019,19 @@ void setup() {
 #ifdef WIFI_ON
   wifi_available = 0;
   Serial.printf("Connecting to WiFi %s %s\n",wifi_ssid,wifi_password);
-  WiFi.softAPdisconnect(true);
-  WiFi.disconnect(true);
-  WiFi.onEvent(WiFiEvent);
-
-  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
-  WiFi.setHostname(clk_global_hostname);
-  WiFi.mode(WIFI_STA);
+  configureWiFi();
   WiFi.begin(wifi_ssid, wifi_password);
 
   // Try forever
   int wifi_init_cnt = 0;
   //wifi_available = 1;
-  while (WiFi.status() != WL_CONNECTED) {
+  while (!wifi_available) {
     Serial.println("...Connecting to WiFi");
     wifi_init_cnt++;
     if (wifi_init_cnt > 40) {
       //wifi_available = 0;
+      //restart
+      ESP.restart();
       break;
     }
     delay(250);
@@ -2675,7 +2648,7 @@ void ButtonPerformAction() {
   }
 }
 
-void displayBand(int band, double level) {
+void displayBand(int band, float level) {
   int dsize = 0;
   CRGB color1;
   int r, g, b;
@@ -2878,7 +2851,7 @@ void task_fftLoop(void *parameter) {
     FFT.compute(FFTDirection::Forward); /* Compute FFT */
     FFT.complexToMagnitude(); /* Compute magnitudes */
 
-    double sum = 0;
+    float sum = 0;
     dc_level = vReal[0] * 0.1 / BIN_MAX;
 
     FFT.dcRemoval();
@@ -3064,12 +3037,23 @@ void loop() {
   // Update Gif trigger counter
   if (xSemaphoreTake(timerSemaphore, 0) == pdTRUE) {
     uint32_t isrCount = 0, isrTime = 0;
+    static int mycounter=0;
     // Read the interrupt count and time
     portENTER_CRITICAL(&timerMux);
     isrCount = isrCounter;
     isrTime = lastIsrAt;
     portEXIT_CRITICAL(&timerMux);
 
+    mycounter++;
+    if (mycounter>=10) {
+      mycounter=0;
+      int wifistatus=WiFi.status();
+      switch (wifistatus) {
+        case 3:Serial.println("Wifi connected");break;
+        default:Serial.printf("Wifi not connected, code: %d\n",wifistatus);break;
+      }            
+      Serial.printf("Total RAM: %d / available: %d / max allocatable: %d\n", ESP.getHeapSize(), ESP.getFreeHeap(), ESP.getMaxAllocHeap());
+    }
     
     if (rtc_time_init_ok) {
       DateTime now = rtc.now();        
